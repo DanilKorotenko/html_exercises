@@ -53,53 +53,6 @@ function point(apoint2D)
     ctx.fillRect(apoint2D.x-S/2,apoint2D.y-S/2,S,S);
 }
 
-function rotatexz(aPoint3D,angle)
-{
-    const C = Math.cos(angle);
-    const S = Math.sin(angle);
-
-    const point3D =
-    {
-        x: aPoint3D.x*C-aPoint3D.z*S,
-        y: aPoint3D.y,
-        z: aPoint3D.x*S+aPoint3D.z*C,
-    };
-
-    return point3D;
-}
-
-function rotateyz(aPoint3D,angle)
-{
-    const C = Math.cos(angle);
-    const S = Math.sin(angle);
-
-    const point3D =
-    {
-        x: aPoint3D.x,
-        y: aPoint3D.y*C-aPoint3D.z*S,
-        z: aPoint3D.y*S+aPoint3D.z*C,
-
-    };
-
-    return point3D;
-}
-
-function rotatexy(aPoint3D,angle)
-{
-    const C = Math.cos(angle);
-    const S = Math.sin(angle);
-
-    const point3D =
-    {
-        x: aPoint3D.x*C-aPoint3D.y*S,
-        y: aPoint3D.x*S+aPoint3D.y*C,
-        z: aPoint3D.z,
-
-    };
-
-    return point3D;
-}
-
 function line(aPoint2D1,aPoint2D2)
 {
     ctx.lineWidth = 3
@@ -108,47 +61,6 @@ function line(aPoint2D1,aPoint2D2)
     ctx.moveTo(aPoint2D1.x,aPoint2D1.y);
     ctx.lineTo(aPoint2D2.x,aPoint2D2.y);
     ctx.stroke();
-}
-
-function project3dto2d(aPoint3D)
-{
-    const point2D = {
-        x: aPoint3D.x/aPoint3D.z,
-        y: aPoint3D.y/aPoint3D.z,
-    };
-    return point2D;
-}
-
-function converttocanvas(aPoint2D)
-{
-    const point2D =
-        {
-            x: ((aPoint2D.x+1)/2)*WIDTH,
-            y: (1-(aPoint2D.y+1)/2)*HIEGHT,
-        };
-    return point2D;
-}
-
-function move_xyz(aPoint3D, aDelta_xyz)
-{
-    const point3D =
-        {
-            x: aPoint3D.x + aDelta_xyz.x,
-            y: aPoint3D.y + aDelta_xyz.y,
-            z: aPoint3D.z + aDelta_xyz.z,
-        };
-    return point3D;
-}
-
-function scale(aPoint3D,aScale3D)
-{
-    const point3D =
-        {
-            x: aPoint3D.x*aScale3D.x,
-            y: aPoint3D.y*aScale3D.y,
-            z: aPoint3D.z*aScale3D.z,
-        };
-    return point3D;
 }
 
 /*
@@ -162,31 +74,35 @@ function animatemodel(aModel,aTranslation3D,anAngle, doRotate)
         const f = aModel.fs[fIndex];
         for (let i = 0; i<f.length; i++)
         {
-            let a = aModel.vs[f[i]];
-            let b = aModel.vs[f[(i+1)%f.length]];
+            const a = new Point(aModel.vs[f[i]]);
+            const b = new Point(aModel.vs[f[(i+1)%f.length]]);
 
             if (doRotate)
             {
-                a = rotateyz(a,0.5*Math.PI);
-                b = rotateyz(b,0.5*Math.PI);
+                a
+                    .rotateyz(0.5*Math.PI)
+                    .scale({x: 0.5,y: 0.5,z: 0.5,});
 
-                a = scale(a,{x: 0.5,y: 0.5,z: 0.5,})
-                b = scale(b,{x: 0.5,y: 0.5,z: 0.5,})
+                b
+                    .rotateyz(0.5*Math.PI)
+                    .scale({x: 0.5,y: 0.5,z: 0.5,});
             }
 
-            a = rotatexz(a,anAngle);
-            b = rotatexz(b,anAngle);
+            a
+                .rotatexz(anAngle)
+                .move({x: -1, y: -2, z: dz,})
+                .move(aTranslation3D)
+                .project3dto2d()
+                .converttocanvas(WIDTH, HIEGHT);
 
-            a = move_xyz(a, {x: -1, y: -2, z: dz,});
-            b = move_xyz(b, {x: -1, y: -2, z: dz,});
+            b
+                .rotatexz(anAngle)
+                .move({x: -1, y: -2, z: dz,})
+                .move(aTranslation3D)
+                .project3dto2d()
+                .converttocanvas(WIDTH, HIEGHT);
 
-            a= move_xyz(a, aTranslation3D);
-            b= move_xyz(b, aTranslation3D);
-
-            const aScr = converttocanvas(project3dto2d(a));
-            const bScr = converttocanvas(project3dto2d(b));
-
-            line(aScr,bScr);
+            line(a,b);
         }
     }
 }
