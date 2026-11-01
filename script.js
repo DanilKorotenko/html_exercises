@@ -63,7 +63,6 @@ function rotatexz(aPoint3D,angle)
         x: aPoint3D.x*C-aPoint3D.z*S,
         y: aPoint3D.y,
         z: aPoint3D.x*S+aPoint3D.z*C,
-
     };
 
     return point3D;
@@ -130,13 +129,13 @@ function converttocanvas(aPoint2D)
     return point2D;
 }
 
-function movez(aPoint3D,aDeltaz)
+function move_xyz(aPoint3D, aDelta_xyz)
 {
     const point3D =
         {
             x: aPoint3D.x,
             y: aPoint3D.y,
-            z: aPoint3D.z+aDeltaz,
+            z: aPoint3D.z + aDelta_xyz.z,
         };
     return point3D;
 }
@@ -211,8 +210,8 @@ function animatemodel(aModel,aTranslation3D,anAngle, doRotate)
             a = rotatexz(a,anAngle);
             b = rotatexz(b,anAngle);
 
-            a = movez(a,dz);
-            b = movez(b,dz);
+            a = move_xyz(a, {x: 0, y: 0, z: dz,});
+            b = move_xyz(b, {x: 0, y: 0, z: dz,});
 
             a = movey(a,-2);
             b = movey(b,-2);
