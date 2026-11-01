@@ -133,31 +133,9 @@ function move_xyz(aPoint3D, aDelta_xyz)
 {
     const point3D =
         {
-            x: aPoint3D.x,
-            y: aPoint3D.y,
+            x: aPoint3D.x + aDelta_xyz.x,
+            y: aPoint3D.y + aDelta_xyz.y,
             z: aPoint3D.z + aDelta_xyz.z,
-        };
-    return point3D;
-}
-
-function movey(aPoint3D,aDeltay)
-{
-    const point3D =
-        {
-            x: aPoint3D.x,
-            y: aPoint3D.y+aDeltay,
-            z: aPoint3D.z,
-        };
-    return point3D;
-}
-
-function movex(aPoint3D,aDeltax)
-{
-    const point3D =
-        {
-            x: aPoint3D.x+aDeltax,
-            y: aPoint3D.y,
-            z: aPoint3D.z,
         };
     return point3D;
 }
@@ -210,14 +188,8 @@ function animatemodel(aModel,aTranslation3D,anAngle, doRotate)
             a = rotatexz(a,anAngle);
             b = rotatexz(b,anAngle);
 
-            a = move_xyz(a, {x: 0, y: 0, z: dz,});
-            b = move_xyz(b, {x: 0, y: 0, z: dz,});
-
-            a = movey(a,-2);
-            b = movey(b,-2);
-
-            a = movex(a,-1);
-            b = movex(b,-1);
+            a = move_xyz(a, {x: -1, y: -2, z: dz,});
+            b = move_xyz(b, {x: -1, y: -2, z: dz,});
 
             a= translate3D(a,aTranslation3D);
             b= translate3D(b,aTranslation3D);
@@ -228,7 +200,6 @@ function animatemodel(aModel,aTranslation3D,anAngle, doRotate)
             line(aScr,bScr);
         }
     }
-
 }
 
 function animate()
